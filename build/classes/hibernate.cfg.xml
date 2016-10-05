@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<hibernate-configuration>
+	<session-factory>
+		<property name="hibernate.dialect">
+			org.hibernate.dialect.MySQLDialect
+		</property>
+		<property name="hibernate.connection.driver_class">
+			com.mysql.jdbc.Driver
+		</property>
+
+		<property name="hibernate.connection.url">
+			jdbc:mysql://localhost:3306/users
+		</property>
+		<property name="hibernate.connection.username">
+			root
+		</property>
+		<property name="hibernate.connection.password">
+			zlf1989
+		</property>
+
+		<!-- specify the pool size -->
+		<property name="hibernate.connection.pool_size">10</property>
+
+		<property name="hibernate.connection.autocommit">true</property>
+		
+		<!-- update or create the existing schema -->
+		<property name="hibernate.hbm2ddl.auto">update</property>
+
+		<!-- whether or not to show the query result in the console/logger -->
+		<property name="show_sql">true</property>
+
+		<!-- List of XML mapping files -->
+		<mapping class="com.model.Task" />
+	</session-factory>
+</hibernate-configuration>

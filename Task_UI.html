@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Load XML And Show As li In Angular JS - SibeeshPassion </title>
+    <meta charset="utf-8">
+ 	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.5/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+	<!-- jQuery library -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+	<!-- Latest compiled JavaScript -->
+	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+        <div ng-app="myApp">
+			<div class="container">
+				<div  ng-controller="tasks_control">
+					Search by: <select  ng-model="searchmethod"/>
+									   		<option>taskname</option>
+									   		<option>description</option>
+									   		<option>status</option>
+								</select>
+					<input type="text" ng-model="searchcontent" >
+					<button ng-click="SearchTask()">Search</button>
+						
+						<div class="task_list" ng-repeat="task in Alltasks">
+							<table class="table table-hover">
+								<thead>
+									<tr>
+										<th>Task Name</th>
+										<th>Task Description</th>
+										<th>Priority</th>
+										<th>Start Date</th>
+										<th>Status</th>
+									</tr>
+								</thead>
+						
+							<!-- <div class="task_list" ng-repeat="task in Alltasks"> -->
+								<tbody>
+									<input type="hidden"  ng-model="task.id">
+									<tr>
+										<td>
+											Task Name:<input type="text"  ng-model="task.taskName" class="form-control"/>
+										</td>
+										<td>
+											Task Description:<br><textarea rows="4" cols="50"  ng-model="task.description" class="form-control"></textarea>
+										</td>
+										<td>
+											Priority:<input type="number"  min="1"  max="10"  ng-model="task.priority" class="form-control"/>
+										</td>
+										<td>
+											Start Date:<input type="date" ng-model="task.startDate"/>
+										</td>
+										<td>
+											Status:<select  ng-model="task.status"/>
+													   		<option>active</option>
+													   		<option>completed</option>
+													   		<option>suspended</option>
+													   </select>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+							<div class="well">
+								<button type="button" class="btn btn-primary btn-block" ng-click="SendData(task)">Update</button>
+								<button type="button" class="btn btn-default btn-block" ng-click="DeleteTask(task)">Delete</button>
+							</div>
+						</div>
+				
+
+				<hr noshade>
+				<!-- <div  ng-controller="addtask_control"> -->
+					<div class="row">
+						<div class="col-sm-3">
+							Task Name:<input type="text" ng-model="taskName" class="form-control">
+						</div>
+						<div class="col-sm-4">
+							Task Description:<textarea rows="4" cols="50"  ng-model="description" class="form-control"></textarea>
+						</div>
+						<div class="col-sm-1">
+							Priority:<input type="number"  min="1"  max="10"  ng-model="priority" class="form-control"/>
+						</div>
+						<div class="col-sm-2">
+							Start Date:<input type="date" ng-model="startDate"/>
+						</div>
+						<div class="col-sm-2">
+							Status:<select  ng-model="status"/>
+									   		<option>active</option>
+									   		<option>completed</option>
+									   		<option>suspended</option>
+									</select>
+						</div>
+					</div>
+					<button type="button" class="btn btn-primary btn-block" ng-click="CreateTask()">Create Task</button>
+				<!-- </div> -->
+			</div>
+			</div>
+		</div>
+    
+    <script>
+    	var app = angular.module('myApp', []);
+
+    	app.controller('tasks_control', function($scope, $http) {
+		    
+		    $http.get('http://localhost:8080/Spring_Hibernate_Task_Management/TaskService/tasks').
+		        success(function(data) {
+		            $scope.Alltasks = data;
+		        });
+
+		    $scope.SendData = function (task) {
+		    	// alert(task.startDate);
+                
+                $http({
+                	method : 'POST',
+                	url : 'http://localhost:8080/Spring_Hibernate_Task_Management/TaskService/update',
+                	data : $.param({
+				                    id: task.id,
+				                    taskName: task.taskName,
+				                    description: task.description,
+				                    priority: task.priority,
+				                    startDate: task.startDate,
+				                    status: task.status
+				                }),
+                	headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'}
+                }).success(function (response) {
+                    $scope.PostDataResponse = response;
+                });
+            };
+
+            $scope.DeleteTask = function (task) {
+            	// alert(task.id);
+                $http({
+                	method : 'POST',
+                	url : 'http://localhost:8080/Spring_Hibernate_Task_Management/TaskService/deleteTask',
+                	data : $.param({
+				                    id: task.id
+				                }),
+                	headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'}
+                }).success(function (response) {
+                    $scope.Alltasks = response;
+                });
+            };
+
+            $scope.SearchTask = function () {
+            	// alert($scope.searchmethod);
+            	// alert($scope.searchcontent);
+            	
+            	$http({
+                	method : 'POST',
+                	url : 'http://localhost:8080/Spring_Hibernate_Task_Management/TaskService/searchTask',
+                	data : $.param({
+				                    content: $scope.searchcontent,
+				                    type: $scope.searchmethod
+				                }),
+                	headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'}
+                }).success(function (response) {
+                    $scope.Alltasks = response;
+                });
+    		};
+
+    		$scope.CreateTask = function () {
+    			
+    			$http({
+                	method : 'POST',
+                	url : 'http://localhost:8080/Spring_Hibernate_Task_Management/TaskService/addTask',
+                	data : $.param({
+				                    taskName: $scope.taskName,
+				                    description: $scope.description,
+				                    priority: $scope.priority,
+				                    startDate: $scope.startDate,
+				                    status: $scope.status
+				                }),
+                	headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'}
+                }).success(function (response) {
+                    $scope.Alltasks = response;
+                });
+    		};
+
+		});
+    </script>
+
+</body>
+</html>
