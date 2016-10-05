@@ -1,4 +1,4 @@
-# 
+#The front-end used AngularJS, the back-end implemented the Restful web service along with Hibernate Dao
 
 
 
