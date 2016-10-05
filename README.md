@@ -2,4 +2,4 @@
 
 
 
-While start the project on server, then open th
+While start the project on server, then open the Task_UI.html.
